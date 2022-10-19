@@ -31,9 +31,9 @@ class TestListYears(unittest.TestCase):
         try:
             main.list_years(2023, 2022)
         except ValueError as e:
-            self.assertEqual("min_year must be less than or equal to max_year", str(e))
+            self.assertEqual('min_year must be less than or equal to max_year', str(e))
         else:
-            raise AssertionError("ValueError was expected but not raised")
+            raise AssertionError('ValueError was expected but not raised')
 
 
 if __name__ == '__main__':

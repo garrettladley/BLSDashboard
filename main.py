@@ -19,10 +19,10 @@ desired_series = ('LNS14000000',
 def api_request(start_year, end_year):
     # hide my API key in an untracked credentials file
     data = json.dumps(
-        {"registrationkey": creds.api_key,
-         "seriesid": desired_series,
-         "startyear": str(start_year), "endyear": str(end_year),
-         "calculations": "true"})
+        {'registrationkey': creds.api_key,
+         'seriesid': desired_series,
+         'startyear': str(start_year), 'endyear': str(end_year),
+         'calculations': 'true'})
 
     headers = {'Content-type': 'application/json'}
 
@@ -36,7 +36,7 @@ def api_request(start_year, end_year):
         series_id = str(series['seriesID'])
         for item in series['data']:
             year_period_str = f"{item['period'][1:]}-01-{item['year']}"
-            date = datetime.datetime.strptime(year_period_str, "%m-%d-%Y")
+            date = datetime.datetime.strptime(year_period_str, '%m-%d-%Y')
             value = float(item['value'])
             footnotes = ""
             for footnote in item['footnotes']:
@@ -95,8 +95,8 @@ app = Dash(__name__)
 app.layout = html.Div([
     # unemployment graph title
     html.Div([
-        html.Pre(children="Unemployment Rate (Seasonally Adjusted) Over Time",
-                 style={"text-align": "center", "font-size": "100%", "color": "black"})
+        html.Pre(children='Unemployment Rate (Seasonally Adjusted) Over Time',
+                 style={'text-align': 'center', 'font-size': '100%', 'color': 'black'})
     ]),
     # unemployment graph
     html.Div([
@@ -109,15 +109,15 @@ app.layout = html.Div([
             max=pd.DatetimeIndex(df['date']).year.max(),
             step=1,
             value=[pd.DatetimeIndex(df['date']).year.min(), pd.DatetimeIndex(df['date']).year.max()],
-            tooltip={"placement": "bottom", "always_visible": True},
+            tooltip={'placement': 'bottom', 'always_visible': True},
             marks=None,
             id='year_slider0'
         )
     ]),
     # cpi graph title
     html.Div([
-        html.Pre(children="CPI for All Urban Consumers (CPI-U) 1967=100 (Unadjusted)",
-                 style={"text-align": "center", "font-size": "100%", "color": "black"})
+        html.Pre(children='CPI for All Urban Consumers (CPI-U) 1967=100 (Unadjusted)',
+                 style={'text-align': 'center', 'font-size': '100%', 'color': 'black'})
     ]),
     # cpi graph
     html.Div([
@@ -130,7 +130,7 @@ app.layout = html.Div([
             max=pd.DatetimeIndex(df['date']).year.max(),
             step=1,
             value=[pd.DatetimeIndex(df['date']).year.min(), pd.DatetimeIndex(df['date']).year.max()],
-            tooltip={"placement": "bottom", "always_visible": True},
+            tooltip={'placement': 'bottom', 'always_visible': True},
             marks=None,
             id='year_slider1'
         )
