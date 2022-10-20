@@ -10,13 +10,9 @@ import main
 # unit tests for the list_years function in main
 class TestListYears(unittest.TestCase):
 
-    # generates list from 1948 (minimum year in BLS data) to 2022
+    # generates list from 1913 (minimum year in BLS data) to 2022
     def test_2022_default(self):
-        self.assertEqual([1948, 1965, 1984, 2003, 2022], main.list_years(1948, 2022))
-
-    # generates list from 1948 to 2048
-    def test_2048_default(self):
-        self.assertEqual([1948, 1953, 1972, 1991, 2010, 2029, 2048], main.list_years(1948, 2048))
+        self.assertEqual([1913, 1927, 1946, 1965, 1984, 2003, 2022], main.list_years(1913, 2022))
 
     # generates list for case of 20 year difference
     def test_20_year_diff(self):
