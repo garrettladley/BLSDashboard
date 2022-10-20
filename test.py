@@ -41,7 +41,7 @@ class TestListYears(unittest.TestCase):
 
 
 # unit tests for the process_json_data function in main
-class TestProcesJSONData(unittest.TestCase):
+class TestProcessJSONData(unittest.TestCase):
 
     # tests whether the appropriate dataframe is returned based on sample JSON post_text for Jan. 2022 to Sept. 2022
     def test_sample_post_text(self):
