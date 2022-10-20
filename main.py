@@ -22,29 +22,26 @@ def api_request(start_year, end_year):
         {'registrationkey': creds.api_key,
          'seriesid': desired_series,
          'startyear': str(start_year), 'endyear': str(end_year),
-         'calculations': 'true'})
+         'calculations': 'false'})
 
     headers = {'Content-type': 'application/json'}
 
     post = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
 
-    rdf = pd.DataFrame(columns=['seriesID', 'date', 'value', 'footnotes'])
+    return process_json_data(json.loads(post.text))
 
-    # process JSON from API request, convert to desired data types
-    json_data = json.loads(post.text)
-    for series in json_data['Results']['series']:
+
+# process JSON from API request, convert to desired data types
+def process_json_data(post_text):
+    the_df = pd.DataFrame(columns=['seriesID', 'date', 'value'])
+    for series in post_text['Results']['series']:
         series_id = str(series['seriesID'])
         for item in series['data']:
             year_period_str = f"{item['period'][1:]}-01-{item['year']}"
             date = datetime.datetime.strptime(year_period_str, '%m-%d-%Y')
             value = float(item['value'])
-            footnotes = ""
-            for footnote in item['footnotes']:
-                if footnote:
-                    footnotes = str(footnotes + footnote['text'] + ',')
-            rdf.loc[len(rdf.index)] = [series_id, date, value, footnotes[0:-1]]
-
-    return rdf
+            the_df.loc[len(the_df.index)] = [series_id, date, value]
+    return the_df
 
 
 # API limits requests to a difference of 19 years, create a dataframe with batches of years 19 apart from the
