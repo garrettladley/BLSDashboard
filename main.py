@@ -106,14 +106,14 @@ def series_name(series_index):
 
 
 # combines the name of the series with over time
-def graph_namer(the_series_name):
-    return the_series_name + ' Over Time'
+def graph_namer(series_index):
+    return series_name(series_index) + ' Over Time'
 
 
 app.layout = html.Div([
     # unemployment graph title
     html.Div([
-        html.Pre(children=graph_namer(series_name(0)),
+        html.Pre(children=graph_namer(0),
                  style=text_style)
     ]),
     # unemployment graph
@@ -134,7 +134,7 @@ app.layout = html.Div([
     ]),
     # cpi graph title
     html.Div([
-        html.Pre(children=graph_namer(series_name(1)),
+        html.Pre(children=graph_namer(1),
                  style=text_style)
     ]),
     # cpi graph
