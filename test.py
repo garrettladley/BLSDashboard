@@ -7,35 +7,6 @@ from pandas.testing import assert_frame_equal
 import main
 
 
-# unit tests for the list_years function in main
-class TestListYears(unittest.TestCase):
-
-    # generates list from 1913 (minimum year in BLS data) to 2022
-    def test_2022_default(self):
-        self.assertEqual([1913, 1927, 1946, 1965, 1984, 2003, 2022], main.list_years(1913, 2022))
-
-    # generates list for case of 20 year difference
-    def test_20_year_diff(self):
-        self.assertEqual([2002, 2003, 2022], main.list_years(2002, 2022))
-
-    # generates list for case of 19 year difference
-    def test_19_year_diff(self):
-        self.assertEqual([2003, 2022], main.list_years(2003, 2022))
-
-    # generates list for case of 1 year difference
-    def test_0_year_diff(self):
-        self.assertEqual([2022], main.list_years(2022, 2022))
-
-    # tests that a ValueError is raised when min_year > max_year
-    def test_min_greater_than_max(self):
-        try:
-            main.list_years(2023, 2022)
-        except ValueError as e:
-            self.assertEqual('min_year must be less than or equal to max_year', str(e))
-        else:
-            raise AssertionError('ValueError was expected but not raised')
-
-
 # unit tests for the process_json_data function in main
 class TestProcessJSONData(unittest.TestCase):
 
@@ -138,6 +109,35 @@ class TestProcessJSONData(unittest.TestCase):
                                                                'value': '842.196',
                                                                'footnotes': [{}]}]}]}})
         assert_frame_equal(df_expected, df_actual)
+
+
+# unit tests for the list_years function in main
+class TestListYears(unittest.TestCase):
+
+    # generates list from 1913 (minimum year in BLS data) to 2022
+    def test_2022_default(self):
+        self.assertEqual([1913, 1927, 1946, 1965, 1984, 2003, 2022], main.list_years(1913, 2022))
+
+    # generates list for case of 20 year difference
+    def test_20_year_diff(self):
+        self.assertEqual([2002, 2003, 2022], main.list_years(2002, 2022))
+
+    # generates list for case of 19 year difference
+    def test_19_year_diff(self):
+        self.assertEqual([2003, 2022], main.list_years(2003, 2022))
+
+    # generates list for case of 1 year difference
+    def test_0_year_diff(self):
+        self.assertEqual([2022], main.list_years(2022, 2022))
+
+    # tests that a ValueError is raised when min_year > max_year
+    def test_min_greater_than_max(self):
+        try:
+            main.list_years(2023, 2022)
+        except ValueError as e:
+            self.assertEqual('min_year must be less than or equal to max_year', str(e))
+        else:
+            raise AssertionError('ValueError was expected but not raised')
 
 
 if __name__ == '__main__':

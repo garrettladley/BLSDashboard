@@ -92,13 +92,11 @@ df_list = pop_df_list()
 # Plotly dash
 app = Dash(__name__)
 
-# variables to be used within the dashboard
-text_style = {'text-align': 'center', 'font-size': '100%', 'color': 'black'}
-slider_tooltip = {'placement': 'bottom', 'always_visible': True}
-
 
 def grapher():
     result = []
+    text_style = {'text-align': 'center', 'font-size': '100%', 'color': 'black'}
+    slider_tooltip = {'placement': 'bottom', 'always_visible': True}
     for x in range(0, len(df_list)):
         the_min = pd.DatetimeIndex(df_list[x]['date']).year.min()
         the_max = pd.DatetimeIndex(df_list[x]['date']).year.max()
