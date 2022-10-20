@@ -9,10 +9,8 @@ from dash import Dash, dcc, html, Input, Output
 
 import creds
 
-# LNS14000000 = Unemployment Rate (Seasonally Adjusted)
-# CUUR0000AA0 = CPI for All Urban Consumers (CPI-U) 1967=100 (Unadjusted)
-desired_series = ('LNS14000000',
-                  'CUUR0000AA0')
+desired_series = {'LNS14000000': 'Unemployment Rate (Seasonally Adjusted)',
+                  'CUUR0000AA0': 'CPI for All Urban Consumers (CPI-U) 1967=100 (Unadjusted)'}
 
 
 # Request that will retrieve data from the BLS Public Data API
@@ -20,7 +18,7 @@ def api_request(start_year, end_year):
     # hide my API key in an untracked credentials file
     data = json.dumps(
         {'registrationkey': creds.api_key,
-         'seriesid': desired_series,
+         'seriesid': list(desired_series.keys()),
          'startyear': str(start_year), 'endyear': str(end_year),
          'calculations': 'false'})
 
@@ -78,13 +76,18 @@ def combine_dfs():
 
 df = combine_dfs()
 
-# the first of the desired series, LNS14000000,
-# dropping duplicate dates and sorting by date to allow for efficient plotting
-df0 = df[df['seriesID'] == desired_series[0]].drop_duplicates('date').sort_values(by='date')
 
-# the second of the desired series, CUUR0000AA0,
-# dropping duplicate dates and sorting by date to allow for efficient plotting
-df1 = df[df['seriesID'] == desired_series[1]].drop_duplicates('date').sort_values(by='date')
+# separate combined dataframe by seriesID
+def separate_series(input_series_id):
+    # dropping duplicate dates and sorting by date to allow for efficient plotting
+    return df[df['seriesID'] == input_series_id].drop_duplicates('date').sort_values(by='date')
+
+
+# the first of the desired series, LNS14000000
+df0 = separate_series(list(desired_series.keys())[0])
+
+# the second of the desired series, CUUR0000AA0
+df1 = separate_series(list(desired_series.keys())[1])
 
 # Plotly dash
 app = Dash(__name__)
@@ -96,10 +99,21 @@ slider_max = pd.DatetimeIndex(df['date']).year.max()
 slider_value = [pd.DatetimeIndex(df['date']).year.min(), pd.DatetimeIndex(df['date']).year.max()]
 slider_tooltip = {'placement': 'bottom', 'always_visible': True}
 
+
+# gets the name of the series based on the index of the series
+def series_name(series_index):
+    return list(desired_series.values())[series_index]
+
+
+# combines the name of the series with over time
+def graph_namer(the_series_name):
+    return the_series_name + ' Over Time'
+
+
 app.layout = html.Div([
     # unemployment graph title
     html.Div([
-        html.Pre(children='Unemployment Rate (Seasonally Adjusted) Over Time',
+        html.Pre(children=graph_namer(series_name(0)),
                  style=text_style)
     ]),
     # unemployment graph
@@ -120,7 +134,7 @@ app.layout = html.Div([
     ]),
     # cpi graph title
     html.Div([
-        html.Pre(children='CPI for All Urban Consumers (CPI-U) 1967=100 (Unadjusted)',
+        html.Pre(children=graph_namer(series_name(1)),
                  style=text_style)
     ]),
     # cpi graph
