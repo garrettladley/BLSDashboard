@@ -89,11 +89,18 @@ df1 = df[df['seriesID'] == desired_series[1]].drop_duplicates('date').sort_value
 # Plotly dash
 app = Dash(__name__)
 
+# variables to be used within the dashboard
+text_style = {'text-align': 'center', 'font-size': '100%', 'color': 'black'}
+slider_min = pd.DatetimeIndex(df['date']).year.min()
+slider_max = pd.DatetimeIndex(df['date']).year.max()
+slider_value = [pd.DatetimeIndex(df['date']).year.min(), pd.DatetimeIndex(df['date']).year.max()]
+slider_tooltip = {'placement': 'bottom', 'always_visible': True}
+
 app.layout = html.Div([
     # unemployment graph title
     html.Div([
         html.Pre(children='Unemployment Rate (Seasonally Adjusted) Over Time',
-                 style={'text-align': 'center', 'font-size': '100%', 'color': 'black'})
+                 style=text_style)
     ]),
     # unemployment graph
     html.Div([
@@ -102,11 +109,11 @@ app.layout = html.Div([
     # slider for unemployment graph
     html.Div([
         dcc.RangeSlider(
-            min=pd.DatetimeIndex(df['date']).year.min(),
-            max=pd.DatetimeIndex(df['date']).year.max(),
+            min=slider_min,
+            max=slider_max,
             step=1,
-            value=[pd.DatetimeIndex(df['date']).year.min(), pd.DatetimeIndex(df['date']).year.max()],
-            tooltip={'placement': 'bottom', 'always_visible': True},
+            value=slider_value,
+            tooltip=slider_tooltip,
             marks=None,
             id='year_slider0'
         )
@@ -114,7 +121,7 @@ app.layout = html.Div([
     # cpi graph title
     html.Div([
         html.Pre(children='CPI for All Urban Consumers (CPI-U) 1967=100 (Unadjusted)',
-                 style={'text-align': 'center', 'font-size': '100%', 'color': 'black'})
+                 style=text_style)
     ]),
     # cpi graph
     html.Div([
@@ -123,11 +130,11 @@ app.layout = html.Div([
     # slider range for cpi graph
     html.Div([
         dcc.RangeSlider(
-            min=pd.DatetimeIndex(df['date']).year.min(),
-            max=pd.DatetimeIndex(df['date']).year.max(),
+            min=slider_min,
+            max=slider_max,
             step=1,
-            value=[pd.DatetimeIndex(df['date']).year.min(), pd.DatetimeIndex(df['date']).year.max()],
-            tooltip={'placement': 'bottom', 'always_visible': True},
+            value=slider_value,
+            tooltip=slider_tooltip,
             marks=None,
             id='year_slider1'
         )
@@ -135,45 +142,29 @@ app.layout = html.Div([
 ])
 
 
-# update unemployment graph based on rangeslider
-@app.callback(
-    Output('unemployment_graph', 'figure'),
-    [Input('year_slider0', 'value')]
-)
-def update_graph(years_chosen):
-    dff = df0[(pd.DatetimeIndex(df0['date']).year >= years_chosen[0]) & (
-            pd.DatetimeIndex(df0['date']).year <= years_chosen[1])]
+# update given graph_id based on rangeslider
+def graph_updater(the_app, graph_id, slider_id, input_df, y_title):
+    @the_app.callback(
+        Output(graph_id, 'figure'),
+        [Input(slider_id, 'value')]
+    )
+    def update_graph(years_chosen):
+        dff = input_df[(pd.DatetimeIndex(input_df['date']).year >= years_chosen[0])
+                       & (pd.DatetimeIndex(input_df['date']).year <= years_chosen[1])]
 
-    unemployment_fig = px.line(data_frame=dff,
-                               x='date',
-                               y='value').update_layout(xaxis_title='Date',
-                                                        yaxis_title='Unemployment Rate',
-                                                        transition_duration=500)
+        cpi_fig = px.line(data_frame=dff,
+                          x='date',
+                          y='value').update_layout(xaxis_title='Date',
+                                                   yaxis_title=y_title,
+                                                   transition_duration=500)
 
-    unemployment_fig.update_traces(textposition='top center')
+        cpi_fig.update_traces(textposition='top center')
 
-    return unemployment_fig
+        return cpi_fig
 
 
-# update cpi graph based on rangeslider
-@app.callback(
-    Output('cpi_graph', 'figure'),
-    [Input('year_slider1', 'value')]
-)
-def update_graph(years_chosen):
-    dff = df1[(pd.DatetimeIndex(df1['date']).year >= years_chosen[0]) & (
-            pd.DatetimeIndex(df1['date']).year <= years_chosen[1])]
-
-    cpi_fig = px.line(data_frame=dff,
-                      x='date',
-                      y='value').update_layout(xaxis_title='Date',
-                                               yaxis_title='CPI for All Urban Consumers (CPI-U)',
-                                               transition_duration=500)
-
-    cpi_fig.update_traces(textposition='top center')
-
-    return cpi_fig
-
+graph_updater(app, 'unemployment_graph', 'year_slider0', df0, 'Unemployment Rate')
+graph_updater(app, 'cpi_graph', 'year_slider1', df1, 'CPI for All Urban Consumers (CPI-U)')
 
 if __name__ == '__main__':
     app.run_server(debug=True)
