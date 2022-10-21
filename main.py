@@ -30,7 +30,12 @@ def api_request(series_id, start_year, end_year):
 
     headers = {'Content-type': 'application/json'}
 
-    post = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+    try:
+        post = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+        post.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        raise SystemExit(err)
+
     return process_json_data(json.loads(post.text))
 
 
