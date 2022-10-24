@@ -16,7 +16,14 @@ desired_series = {'LNS14000000': [1948,
                                   'Unemployment Rate'],
                   'CUUR0000AA0': [1913,
                                   'CPI for All Urban Consumers (CPI-U) 1967=100 (Unadjusted)',
-                                  'CPI for All Urban Consumers (CPI-U)']}
+                                  'CPI for All Urban Consumers (CPI-U)'],
+                  'EIUIR': [1983,
+                            'Imports for All Commodities',
+                            'Imports (All Commodities)'],
+                  'EIUIQ': [1983,
+                            'Exports for All Commodities',
+                            'Exports (All Commodities)']
+                  }
 
 
 # Request that will retrieve data from the BLS Public Data API
