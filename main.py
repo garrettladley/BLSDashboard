@@ -1,7 +1,7 @@
 import datetime
 import json
-import math
 
+import math
 import pandas as pd
 import plotly.express as px
 import requests
@@ -11,7 +11,7 @@ import creds
 
 # dictionary with series id as the key and a list containing the minimum year of the series, the graph title of the
 # series, and the axis title of the series as the value
-desired_series = {'LNS14000000': [1948,
+DESIRED_SERIES = {'LNS14000000': [1948,
                                   'Unemployment Rate (Seasonally Adjusted)',
                                   'Unemployment Rate'],
                   'CUUR0000AA0': [1913,
@@ -84,37 +84,31 @@ def list_years(min_year, max_year):
 def make_df(current_index):
     cur_year = datetime.date.today().year
     period_dfs = []
-    years = list_years(list(desired_series.values())[current_index][0], cur_year)
+    years = list_years(list(DESIRED_SERIES.values())[current_index][0], cur_year)
     for x in range(0, len(years) + 1):
         if x < len(years) - 1:
-            period_dfs.append(api_request(list(desired_series.keys())[current_index], years[x], years[x + 1]))
+            period_dfs.append(api_request(list(DESIRED_SERIES.keys())[current_index], years[x], years[x + 1]))
 
     return pd.concat(period_dfs, axis=0).drop_duplicates('date').sort_values(by='date')
 
 
 def pop_df_list():
     result = []
-    for x in range(0, len(desired_series)):
+    for x in range(0, len(DESIRED_SERIES)):
         result.append(make_df(x))
     return result
 
 
-df_list = pop_df_list()
-
-# Plotly dash
-app = Dash(__name__)
-
-
-def grapher():
+def grapher(the_list):
     result = []
     text_style = {'text-align': 'center', 'font-size': '100%', 'color': 'black'}
     slider_tooltip = {'placement': 'bottom', 'always_visible': True}
-    for x in range(0, len(df_list)):
-        the_min = pd.DatetimeIndex(df_list[x]['date']).year.min()
-        the_max = pd.DatetimeIndex(df_list[x]['date']).year.max()
+    for x in range(0, len(the_list)):
+        the_min = pd.DatetimeIndex(the_list[x]['date']).year.min()
+        the_max = pd.DatetimeIndex(the_list[x]['date']).year.max()
 
         result.append(
-            html.Div([html.Pre(children=list(desired_series.values())[x][1] + ' Over Time', style=text_style)]))
+            html.Div([html.Pre(children=list(DESIRED_SERIES.values())[x][1] + ' Over Time', style=text_style)]))
         result.append(
             html.Div([dcc.Graph(id='graph_' + str(x))]))
         result.append(
@@ -127,9 +121,6 @@ def grapher():
                                       id='year_slider_' + str(x))]))
 
     return result
-
-
-app.layout = html.Div(grapher())
 
 
 def graph_updater(the_app, graph_id, slider_id, input_df, y_title):
@@ -152,12 +143,14 @@ def graph_updater(the_app, graph_id, slider_id, input_df, y_title):
         return cpi_fig
 
 
-for index in range(0, len(desired_series)):
-    graph_updater(app,
-                  'graph_' + str(index),
-                  'year_slider_' + str(index),
-                  df_list[index],
-                  list(desired_series.values())[index][2])
-
 if __name__ == '__main__':
+    df_list = pop_df_list()
+    app = Dash(__name__)
+    app.layout = html.Div(grapher(df_list))
+    for index in range(0, len(DESIRED_SERIES)):
+        graph_updater(app,
+                      'graph_' + str(index),
+                      'year_slider_' + str(index),
+                      df_list[index],
+                      list(DESIRED_SERIES.values())[index][2])
     app.run_server(debug=True)
