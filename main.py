@@ -142,7 +142,7 @@ def graph_updater(the_app, graph_id, slider_id, input_df, y_title):
         return cpi_fig
 
 
-if __name__ == '__main__':
+def main():
     df_list = pop_df_list()
     app = Dash(__name__)
     app.layout = html.Div(grapher(df_list))
@@ -153,3 +153,7 @@ if __name__ == '__main__':
                       df_list[index],
                       list(DESIRED_SERIES.values())[index][2])
     app.run_server(debug=True)
+
+
+if __name__ == '__main__':
+    main()
