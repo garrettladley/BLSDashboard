@@ -1,5 +1,5 @@
 import unittest
-from datetime import date
+from datetime import datetime
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -12,24 +12,24 @@ class TestProcessJSONData(unittest.TestCase):
 
     # tests whether the appropriate dataframe is returned based on sample JSON post_text for Jan. 2022 to Sept. 2022
     def test_sample_post_text(self):
-        df_expected = pd.DataFrame([['LNS14000000', date(2022, 9, 1), 3.500],
-                                    ['LNS14000000', date(2022, 8, 1), 3.700],
-                                    ['LNS14000000', date(2022, 7, 1), 3.500],
-                                    ['LNS14000000', date(2022, 6, 1), 3.600],
-                                    ['LNS14000000', date(2022, 5, 1), 3.600],
-                                    ['LNS14000000', date(2022, 4, 1), 3.600],
-                                    ['LNS14000000', date(2022, 3, 1), 3.600],
-                                    ['LNS14000000', date(2022, 2, 1), 3.800],
-                                    ['LNS14000000', date(2022, 1, 1), 4.000],
-                                    ['CUUR0000AA0', date(2022, 9, 1), 889.104],
-                                    ['CUUR0000AA0', date(2022, 8, 1), 887.197],
-                                    ['CUUR0000AA0', date(2022, 7, 1), 887.511],
-                                    ['CUUR0000AA0', date(2022, 6, 1), 887.615],
-                                    ['CUUR0000AA0', date(2022, 5, 1), 875.589],
-                                    ['CUUR0000AA0', date(2022, 4, 1), 866.042],
-                                    ['CUUR0000AA0', date(2022, 3, 1), 861.325],
-                                    ['CUUR0000AA0', date(2022, 2, 1), 849.887],
-                                    ['CUUR0000AA0', date(2022, 1, 1), 842.196]
+        df_expected = pd.DataFrame([['LNS14000000', datetime(2022, 9, 1), 3.500],
+                                    ['LNS14000000', datetime(2022, 8, 1), 3.700],
+                                    ['LNS14000000', datetime(2022, 7, 1), 3.500],
+                                    ['LNS14000000', datetime(2022, 6, 1), 3.600],
+                                    ['LNS14000000', datetime(2022, 5, 1), 3.600],
+                                    ['LNS14000000', datetime(2022, 4, 1), 3.600],
+                                    ['LNS14000000', datetime(2022, 3, 1), 3.600],
+                                    ['LNS14000000', datetime(2022, 2, 1), 3.800],
+                                    ['LNS14000000', datetime(2022, 1, 1), 4.000],
+                                    ['CUUR0000AA0', datetime(2022, 9, 1), 889.104],
+                                    ['CUUR0000AA0', datetime(2022, 8, 1), 887.197],
+                                    ['CUUR0000AA0', datetime(2022, 7, 1), 887.511],
+                                    ['CUUR0000AA0', datetime(2022, 6, 1), 887.615],
+                                    ['CUUR0000AA0', datetime(2022, 5, 1), 875.589],
+                                    ['CUUR0000AA0', datetime(2022, 4, 1), 866.042],
+                                    ['CUUR0000AA0', datetime(2022, 3, 1), 861.235],
+                                    ['CUUR0000AA0', datetime(2022, 2, 1), 849.887],
+                                    ['CUUR0000AA0', datetime(2022, 1, 1), 842.196]
                                     ],
                                    columns=['seriesID', 'date', 'value'])
         df_actual = main.process_json_data({'status': 'REQUEST_SUCCEEDED',
