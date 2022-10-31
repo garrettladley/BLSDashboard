@@ -87,7 +87,7 @@ def make_df(current_index):
     years = list_years(list(DESIRED_SERIES.values())[current_index][0], cur_year)
     for idx, elem in enumerate(years):
         if idx < len(years) - 1:
-            period_dfs.append(api_request(list(DESIRED_SERIES.keys())[current_index], years[idx], years[idx + 1]))
+            period_dfs.append(api_request(list(DESIRED_SERIES)[current_index], years[idx], years[idx + 1]))
     return pd.concat(period_dfs, axis=0).drop_duplicates('date').sort_values(by='date')
 
 
@@ -109,7 +109,7 @@ def grapher(the_list):
         result.append(
             html.Div([html.Pre(children=list(DESIRED_SERIES.values())[idx][1] + ' Over Time', style=text_style)]))
         result.append(
-            html.Div([dcc.Graph(id='graph_' + str(idx))]))
+            html.Div([dcc.Graph(id='graph_' + str(idx), config={'showAxisDragHandles': False})]))
         result.append(
             html.Div([dcc.RangeSlider(min=the_min,
                                       max=the_max,
