@@ -70,7 +70,7 @@ def list_years(min_year, max_year):
         raise ValueError('min_year must be less than or equal to max_year')
     result = []
     num_periods = math.ceil((max_year - min_year) / 19)
-    for x in range(0, num_periods + 1):
+    for x in range(num_periods + 1):
         if max_year - 19 * x < min_year:
             result.append(min_year)
         else:
@@ -85,17 +85,16 @@ def make_df(current_index):
     cur_year = datetime.date.today().year
     period_dfs = []
     years = list_years(list(DESIRED_SERIES.values())[current_index][0], cur_year)
-    for x in range(0, len(years) + 1):
-        if x < len(years) - 1:
-            period_dfs.append(api_request(list(DESIRED_SERIES.keys())[current_index], years[x], years[x + 1]))
-
+    for idx, elem in enumerate(years):
+        if idx < len(years) - 1:
+            period_dfs.append(api_request(list(DESIRED_SERIES.keys())[current_index], years[idx], years[idx + 1]))
     return pd.concat(period_dfs, axis=0).drop_duplicates('date').sort_values(by='date')
 
 
 def pop_df_list():
     result = []
-    for x in range(0, len(DESIRED_SERIES)):
-        result.append(make_df(x))
+    for idx, elem in enumerate(DESIRED_SERIES):
+        result.append(make_df(idx))
     return result
 
 
@@ -103,14 +102,14 @@ def grapher(the_list):
     result = []
     text_style = {'text-align': 'center', 'font-size': '100%', 'color': 'black'}
     slider_tooltip = {'placement': 'bottom', 'always_visible': True}
-    for x in range(0, len(the_list)):
-        the_min = pd.DatetimeIndex(the_list[x]['date']).year.min()
-        the_max = pd.DatetimeIndex(the_list[x]['date']).year.max()
+    for idx, series in enumerate(the_list):
+        the_min = pd.DatetimeIndex(the_list[idx]['date']).year.min()
+        the_max = pd.DatetimeIndex(the_list[idx]['date']).year.max()
 
         result.append(
-            html.Div([html.Pre(children=list(DESIRED_SERIES.values())[x][1] + ' Over Time', style=text_style)]))
+            html.Div([html.Pre(children=list(DESIRED_SERIES.values())[idx][1] + ' Over Time', style=text_style)]))
         result.append(
-            html.Div([dcc.Graph(id='graph_' + str(x))]))
+            html.Div([dcc.Graph(id='graph_' + str(idx))]))
         result.append(
             html.Div([dcc.RangeSlider(min=the_min,
                                       max=the_max,
@@ -118,7 +117,7 @@ def grapher(the_list):
                                       value=[the_min, the_max],
                                       tooltip=slider_tooltip,
                                       marks=None,
-                                      id='year_slider_' + str(x))]))
+                                      id='year_slider_' + str(idx))]))
 
     return result
 
@@ -147,7 +146,7 @@ if __name__ == '__main__':
     df_list = pop_df_list()
     app = Dash(__name__)
     app.layout = html.Div(grapher(df_list))
-    for index in range(0, len(DESIRED_SERIES)):
+    for index, element in enumerate(DESIRED_SERIES):
         graph_updater(app,
                       'graph_' + str(index),
                       'year_slider_' + str(index),
