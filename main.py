@@ -131,15 +131,15 @@ def graph_updater(the_app, graph_id, slider_id, input_df, y_title):
         dff = input_df[(pd.DatetimeIndex(input_df['date']).year >= years_chosen[0])
                        & (pd.DatetimeIndex(input_df['date']).year <= years_chosen[1])]
 
-        cpi_fig = px.line(data_frame=dff,
+        the_fig = px.line(data_frame=dff,
                           x='date',
                           y='value').update_layout(xaxis_title='Date',
                                                    yaxis_title=y_title,
                                                    transition_duration=500)
 
-        cpi_fig.update_traces(textposition='top center')
+        the_fig.update_traces(textposition='top center')
 
-        return cpi_fig
+        return the_fig
 
 
 def main():
