@@ -125,5 +125,4 @@ venv.bak/
 dmypy.json
 
 # credentials
-src/dashboard/creds.py
 creds.py
