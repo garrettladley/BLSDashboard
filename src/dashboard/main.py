@@ -7,7 +7,7 @@ import plotly.express as px
 import requests
 from dash import Dash, dcc, html, Input, Output
 
-import creds
+from src.dashboard import creds
 
 # dictionary with series id as the key and a list containing the minimum year of the series, the graph title of the
 # series, and the axis title of the series as the value
