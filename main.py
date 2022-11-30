@@ -1,11 +1,11 @@
 import datetime
 import json
 
-import math
 import pandas as pd
 import plotly.express as px
-import requests
 from dash import Dash, dcc, html, Input, Output
+from math import ceil
+from requests import post, exceptions
 
 import creds
 
@@ -38,12 +38,12 @@ def api_request(series_id, start_year, end_year):
     headers = {'Content-type': 'application/json'}
 
     try:
-        post = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
-        post.raise_for_status()
-    except requests.exceptions.HTTPError as error:
+        post_req = post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+        post_req.raise_for_status()
+    except exceptions.HTTPError as error:
         raise SystemExit(error)
 
-    return process_json_data(json.loads(post.text))
+    return process_json_data(json.loads(post_req.text))
 
 
 # process JSON from API request, convert to desired data types
@@ -69,7 +69,7 @@ def list_years(min_year, max_year):
     if min_year > max_year:
         raise ValueError('min_year must be less than or equal to max_year')
     result = []
-    num_periods = math.ceil((max_year - min_year) / 19)
+    num_periods = ceil((max_year - min_year) / 19)
     for x in range(num_periods + 1):
         if max_year - 19 * x < min_year:
             result.append(min_year)
