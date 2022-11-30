@@ -7,8 +7,6 @@ from dash import Dash, dcc, html, Input, Output
 from math import ceil
 from requests import post, exceptions
 
-import creds
-
 # dictionary with series id as the key and a list containing the minimum year of the series, the graph title of the
 # series, and the axis title of the series as the value
 DESIRED_SERIES = {'LNS14000000': [1948,
@@ -25,12 +23,14 @@ DESIRED_SERIES = {'LNS14000000': [1948,
                             'Exports (All Commodities)']
                   }
 
+API_KEY = open('secrets/api_key.txt').readline()
+
 
 # Request that will retrieve data from the BLS Public Data API
 def api_request(series_id, start_year, end_year):
     # hide my API key in an untracked credentials file
     data = json.dumps(
-        {'registrationkey': creds.api_key,
+        {'registrationkey': API_KEY,
          'seriesid': [series_id],
          'startyear': str(start_year), 'endyear': str(end_year),
          'calculations': 'false'})
