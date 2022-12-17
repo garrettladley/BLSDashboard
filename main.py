@@ -29,11 +29,10 @@ API_KEY = open('secrets/api_key.txt').readline()
 # Request that will retrieve data from the BLS Public Data API
 def api_request(series_id, start_year, end_year):
     # hide my API key in an untracked credentials file
-    data = json.dumps(
-        {'registrationkey': API_KEY,
-         'seriesid': [series_id],
-         'startyear': str(start_year), 'endyear': str(end_year),
-         'calculations': 'false'})
+    data = json.dumps({'registrationkey': API_KEY,
+                       'seriesid': [series_id],
+                       'startyear': str(start_year), 'endyear': str(end_year),
+                       'calculations': 'false'})
 
     headers = {'Content-type': 'application/json'}
 
